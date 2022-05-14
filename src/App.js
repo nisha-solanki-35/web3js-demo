@@ -5,7 +5,7 @@ import { Fragment } from 'react';
 
 function App() {
   return (
-    <Fragment className="App">
+    <Fragment>
       <Wallet />
     </Fragment>
   );
