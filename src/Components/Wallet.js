@@ -11,22 +11,24 @@ const Wallet = props => {
 
   const handleWallet = async () => {
     try {
-      const web3 = new Web3('http://127.0.0.1:7545');
-      console.log('web3', web3)
-      // const provider = window.ethereum
-      // const account = await provider.request({ method: 'eth_accounts'})
+      const web3 = new Web3(window.ethereum);
+      // console.log('web3', web3)
+      const provider = window.ethereum
+      const metaAccount = await provider.request({ method: 'eth_requestAccounts'})
+      console.log('metaAccount', metaAccount)
       // const accounts = await provider.request({ method: 'eth_getAccounts'})
       const acnts = await web3.eth.getAccounts();
       accounts.current = acnts
-      const trnsctn = await web3.eth.getTransaction('0xb863e9f7700b56971757b75936824d0068e7ef8540aa7087d4bdcf8b7111ed04')
+      const trnsctn = await web3.eth.getTransaction('0xdcbaa4d21d5f06216c95c3be46d5b52bb5e1bd2cc885fedafd76d013f7163b7d')
       transaction.current = trnsctn
-      // const pendingTransation = await web3.eth.getPendingTransactions()
-      const transactionCnt = await web3.eth.getTransactionCount('0x2526B7dDf64934c57ff965B092DDbDcbC270D8B3')
+      // const pendingTransaction = await web3.eth.getPendingTransactions()
+      const transactionCnt = await web3.eth.getTransactionCount(acnts[0])
       transactionCount.current = transactionCnt
-      const transactionReceipt = await web3.eth.getTransactionReceipt('0xb863e9f7700b56971757b75936824d0068e7ef8540aa7087d4bdcf8b7111ed04')
+      const transactionReceipt = await web3.eth.getTransactionReceipt(transaction?.current.hash)
       console.log('accounts', accounts)
+      console.log('acnts[0]', acnts[0])
       console.log('transaction', transaction)
-      // console.log('pendingTransation', pendingTransation)
+      // console.log('pendingTransaction', pendingTransaction)
       console.log('transactionCount', transactionCount)
       console.log('transactionReceipt', transactionReceipt)
       setLoading(false)
