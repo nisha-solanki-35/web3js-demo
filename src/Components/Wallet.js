@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react'
+import { Button } from 'reactstrap'
 // import PropTypes from 'prop-types'
 import Web3 from 'web3'
 
@@ -11,26 +12,25 @@ const Wallet = props => {
 
   const handleWallet = async () => {
     try {
-      const web3 = new Web3(window.ethereum);
       // console.log('web3', web3)
-      const provider = window.ethereum
-      const metaAccount = await provider.request({ method: 'eth_requestAccounts'})
-      console.log('metaAccount', metaAccount)
+      // const provider = window.ethereum
+      // const metaAccount = await provider.request({ method: 'eth_requestAccounts'})
+      // console.log('metaAccount', metaAccount)
       // const accounts = await provider.request({ method: 'eth_getAccounts'})
-      const acnts = await web3.eth.getAccounts();
-      accounts.current = acnts
-      const trnsctn = await web3.eth.getTransaction('0xdcbaa4d21d5f06216c95c3be46d5b52bb5e1bd2cc885fedafd76d013f7163b7d')
-      transaction.current = trnsctn
-      // const pendingTransaction = await web3.eth.getPendingTransactions()
-      const transactionCnt = await web3.eth.getTransactionCount(acnts[0])
-      transactionCount.current = transactionCnt
-      const transactionReceipt = await web3.eth.getTransactionReceipt(transaction?.current.hash)
-      console.log('accounts', accounts)
-      console.log('acnts[0]', acnts[0])
-      console.log('transaction', transaction)
-      // console.log('pendingTransaction', pendingTransaction)
-      console.log('transactionCount', transactionCount)
-      console.log('transactionReceipt', transactionReceipt)
+      // const acnts = await web3.eth.getAccounts();
+      // accounts.current = acnts
+      // const trnsctn = await web3.eth.getTransaction('0xdcbaa4d21d5f06216c95c3be46d5b52bb5e1bd2cc885fedafd76d013f7163b7d')
+      // transaction.current = trnsctn
+      // // const pendingTransaction = await web3.eth.getPendingTransactions()
+      // const transactionCnt = await web3.eth.getTransactionCount(acnts[0])
+      // transactionCount.current = transactionCnt
+      // const transactionReceipt = await web3.eth.getTransactionReceipt(transaction?.current.hash)
+      // console.log('accounts', accounts)
+      // console.log('acnts[0]', acnts[0])
+      // console.log('transaction', transaction)
+      // // console.log('pendingTransaction', pendingTransaction)
+      // console.log('transactionCount', transactionCount)
+      // console.log('transactionReceipt', transactionReceipt)
       setLoading(false)
     } catch (error) {
       alert(error?.message)
@@ -38,13 +38,20 @@ const Wallet = props => {
     }
   }
   
-  useEffect(() => {
+  async function enableEth () {
+    const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545')
+    await window.ethereum.enable()
+    const network = await web3.eth.net.getNetworkType()
+    console.log('network',network)
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    console.log('accounts', accounts)
     setLoading(true)
     handleWallet()
-  }, [])
-  
+  }
+
   return (
     <Fragment>
+      <Button onClick={enableEth}>Enable Ethereum</Button>
       {loading ? 
         <h3>Loading...</h3>
       : <Fragment>
