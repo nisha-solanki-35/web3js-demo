@@ -3,7 +3,6 @@ import React, { Fragment, useEffect, useRef, useState } from 'react'
 import Web3 from 'web3'
 
 const Wallet = props => {
-
   const accounts = useRef('')
   const transaction = useRef('')
   const transactionCount = useRef('')
@@ -11,20 +10,25 @@ const Wallet = props => {
 
   const handleWallet = async () => {
     try {
-      const web3 = new Web3(window.ethereum);
+      const web3 = new Web3(Web3.givenProvider)
       // console.log('web3', web3)
-      const provider = window.ethereum
-      const metaAccount = await provider.request({ method: 'eth_requestAccounts'})
-      console.log('metaAccount', metaAccount)
+      // const provider = window.ethereum
+      // const metaAccount = await provider.request({ method: 'eth_requestAccounts'})
+      // console.log('metaAccount', metaAccount)
       // const accounts = await provider.request({ method: 'eth_getAccounts'})
-      const acnts = await web3.eth.getAccounts();
+      const acnts = await web3.eth.getAccounts()
       accounts.current = acnts
-      const trnsctn = await web3.eth.getTransaction('0xdcbaa4d21d5f06216c95c3be46d5b52bb5e1bd2cc885fedafd76d013f7163b7d')
+      console.log('acnts[0]', acnts[0])
+      const coinBase = await web3.eth.getBlockNumber()
+      console.log('coinBase', coinBase)
+      const block = await web3.eth.getBlock('12290338')
+      console.log('block', block)
+      const trnsctn = await web3.eth.getTransaction(block.hash)
       transaction.current = trnsctn
+      const transactionReceipt = await web3.eth.getTransactionReceipt(transaction?.current.hash)
       // const pendingTransaction = await web3.eth.getPendingTransactions()
       const transactionCnt = await web3.eth.getTransactionCount(acnts[0])
       transactionCount.current = transactionCnt
-      const transactionReceipt = await web3.eth.getTransactionReceipt(transaction?.current.hash)
       console.log('accounts', accounts)
       console.log('acnts[0]', acnts[0])
       console.log('transaction', transaction)
@@ -37,17 +41,17 @@ const Wallet = props => {
       console.log('error', error)
     }
   }
-  
+
   useEffect(() => {
     setLoading(true)
     handleWallet()
   }, [])
-  
+
   return (
     <Fragment>
-      {loading ? 
-        <h3>Loading...</h3>
-      : <Fragment>
+      {loading
+        ? <h3>Loading...</h3>
+        : <Fragment>
         <h3>Transaction Details</h3>
         <table>
           <tbody>
