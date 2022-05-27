@@ -1,10 +1,11 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react'
+import React, { Fragment, useRef, useState } from 'react'
 import { Button } from 'reactstrap'
 // import PropTypes from 'prop-types'
 import Web3 from 'web3'
+import SignTransaction from './SignTransaction'
 
 const Wallet = props => {
-  const accounts = useRef('')
+  const [accounts, setAccounts] = useState('')
   const transaction = useRef('')
   const transactionCount = useRef('')
   const [loading, setLoading] = useState(false)
@@ -43,13 +44,33 @@ const Wallet = props => {
     }
   }
 
-  useEffect(() => {
+  async function enableEth () {
+    const web3 = new Web3(Web3.givenProvider || 'http://localhost:8545')
+    await window.ethereum.enable()
+    const network = await web3.eth.net.getNetworkType()
+    console.log('network',network)
+    setAccounts(await web3.eth.getAccounts())
+    console.log('accounts', accounts)
+    const balance = await web3.eth.getBalance(accounts[0])
+    console.log('balance', balance)
+    const balanceInWei = web3.utils.fromWei(balance)
+    console.log('balanceInWei', balanceInWei) 
     setLoading(true)
     handleWallet()
-  }, [])
+  }
+
+  // useEffect(() => {
+  //   setLoading(true)
+  //   handleWallet()
+  // }, [])
+
+  console.log('account', accounts[0])
 
   return (
     <Fragment>
+      <Button color='primary' onClick={enableEth}>Enable Ethereum</Button>
+      <br />
+      <SignTransaction {...props} accountAddress={accounts[0]} />
       {loading
         ? <h3>Loading...</h3>
         : <Fragment>
